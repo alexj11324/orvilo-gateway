@@ -6,8 +6,6 @@ import (
 	"time"
 )
 
-const defaultLobeAPIBaseURL = "https://app.lobehub.com"
-
 type Config struct {
 	JWKSPublicKey   string
 	LobeAPIBaseURL  string
@@ -22,13 +20,13 @@ func (c Config) Validate() error {
 	if c.ServiceToken == "" {
 		return errors.New("SERVICE_TOKEN is required")
 	}
-	return nil
+	return validateAPIKeyServerURL(c.LobeAPIBaseURL, c.LobeAPIBaseURL)
 }
 
 func ConfigFromEnv() Config {
 	return Config{
 		JWKSPublicKey:   os.Getenv("JWKS_PUBLIC_KEY"),
-		LobeAPIBaseURL:  envOrDefault("LOBE_API_BASE_URL", defaultLobeAPIBaseURL),
+		LobeAPIBaseURL:  os.Getenv("LOBE_API_BASE_URL"),
 		Port:            envOrDefault("PORT", "8787"),
 		ReadTimeout:     durationEnvOrDefault("READ_TIMEOUT", 30*time.Second),
 		ServiceToken:    os.Getenv("SERVICE_TOKEN"),

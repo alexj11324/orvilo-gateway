@@ -545,7 +545,7 @@ func TestV1OwnerIsRecheckedWhenInitRacesAuthentication(t *testing.T) {
 	}))
 	defer identity.Close()
 
-	srv := NewServer(Config{ServiceToken: "service-token"})
+	srv := NewServer(Config{ServiceToken: "service-token", LobeAPIBaseURL: identity.URL})
 	ts := httptest.NewServer(srv.Routes())
 	defer ts.Close()
 	ws := dialWebSocket(t, ts.URL, "/ws?operationId=auth-init-race")

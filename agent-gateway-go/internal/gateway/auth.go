@@ -39,7 +39,10 @@ func (a *authResolver) resolve(ctx context.Context, storedUserID string, msg aut
 		if msg.ServerURL == "" {
 			return "", errors.New("Missing serverUrl for apiKey auth")
 		}
-		return verifyAPIKey(ctx, msg.ServerURL, msg.Token)
+		if err := validateAPIKeyServerURL(a.cfg.LobeAPIBaseURL, msg.ServerURL); err != nil {
+			return "", err
+		}
+		return verifyAPIKey(ctx, a.cfg.LobeAPIBaseURL, msg.Token)
 	}
 
 	if msg.Token == a.cfg.ServiceToken {
@@ -50,6 +53,18 @@ func (a *authResolver) resolve(ctx context.Context, storedUserID string, msg aut
 	}
 
 	return a.verifyJWT(msg.Token)
+}
+
+func validateAPIKeyServerURL(configuredURL string, requestedURL string) error {
+	parsed, err := url.Parse(configuredURL)
+	if err != nil || (parsed.Scheme != "https" && parsed.Scheme != "http") ||
+		parsed.Hostname() == "" || parsed.User != nil || parsed.RawQuery != "" || parsed.Fragment != "" {
+		return errors.New("Invalid configured backend URL")
+	}
+	if normalizeBaseURL(requestedURL) != normalizeBaseURL(configuredURL) {
+		return errors.New("serverUrl must match the configured backend URL")
+	}
+	return nil
 }
 
 func verifyAPIKey(ctx context.Context, serverURL string, token string) (string, error) {
