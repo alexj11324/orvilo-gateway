@@ -54,12 +54,7 @@ func durationEnvOrDefault(key string, fallback time.Duration) time.Duration {
 	return parsed
 }
 
-// backendURLFromEnv reads the Orvilo server address. LOBE_API_BASE_URL is the
-// name upstream uses and existing deployments are configured with; it stays
-// accepted so they keep starting.
+// backendURLFromEnv reads the Orvilo server address.
 func backendURLFromEnv() string {
-	if value := os.Getenv("ORVILO_API_BASE_URL"); value != "" {
-		return value
-	}
-	return os.Getenv("LOBE_API_BASE_URL")
+	return os.Getenv("ORVILO_API_BASE_URL")
 }

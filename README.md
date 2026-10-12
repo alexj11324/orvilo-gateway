@@ -122,9 +122,9 @@ This repository is organized as a collection of gateway services. Each gateway l
 
 The current implementation style is intentionally minimal: state is held in memory, services run as ordinary HTTP/WebSocket servers, and deployment can be handled by systemd, Docker, Kubernetes, or any other process manager.
 
-## Relationship To LobeHub Gateway
+## Relationship To The Original Gateways
 
-Compared with the original LobeHub gateway projects, this repository has several deliberate differences:
+Compared with the original TypeScript gateway projects, this repository has several deliberate differences:
 
 | Area | Original gateway | This repository |
 | --- | --- | --- |

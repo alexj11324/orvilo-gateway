@@ -13,7 +13,7 @@ Upstream base: `fed50da75b8916566f87e32fafd852a8a34e336b` (LobeHub Gateway 0.4.0
 | --- | --- |
 | `feat(device-gateway): add the Orvilo workspace protocol` | Separate personal and workspace device pools, workspace JWT purpose/subject/claim checks, workspace HTTP dispatch, API-key auth limited to `ORVILO_API_BASE_URL` |
 | `feat(agent-gateway): apply the Orvilo backend-origin change` | The backend-origin change the agent gateway is deployed with |
-| `refactor: rename the project to Orvilo Gateway` | Go module paths, product names in docs and release titles, and `ORVILO_API_BASE_URL` for the agent gateway (`LOBE_API_BASE_URL` is still read as a fallback) |
+| `refactor: rename the project to Orvilo Gateway` | Go module paths, product names in docs and release titles, and `ORVILO_API_BASE_URL` for the agent gateway (the upstream variable name is no longer read) |
 
 `git log fed50da..master` lists every Orvilo change. Everything below that
 commit is upstream history, unmodified.

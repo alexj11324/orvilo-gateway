@@ -160,7 +160,7 @@ func TestWebSocketResumeCompleteWithoutBufferedEvents(t *testing.T) {
 }
 
 // TestWebSocketResumeCompleteSkippedWhenStatusMissing mirrors the upstream
-// AgentOperationDO.handleResume safety contract (LOBE-10443): when the
+// AgentOperationDO.handleResume safety contract: when the
 // operation has no stored status (e.g. the init/resume race for
 // trigger-started runs, or a freshly created operation that never received
 // /api/operations/init), the gateway MUST NOT synthesize a resume_complete.

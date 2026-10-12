@@ -88,24 +88,11 @@ func TestConfigRequiresBackendURL(t *testing.T) {
 func TestConfigFromEnvRequiresExplicitBackendURL(t *testing.T) {
 	t.Setenv("SERVICE_TOKEN", "unit-test-service-token")
 	t.Setenv("ORVILO_API_BASE_URL", "")
-	t.Setenv("LOBE_API_BASE_URL", "")
 	if err := ConfigFromEnv().Validate(); err == nil {
 		t.Fatal("missing backend environment setting must fail validation")
 	}
 	t.Setenv("ORVILO_API_BASE_URL", "https://orvilo.example")
 	if err := ConfigFromEnv().Validate(); err != nil {
 		t.Fatalf("configured backend environment setting must pass: %v", err)
-	}
-}
-
-func TestConfigFromEnvStillAcceptsTheUpstreamBackendName(t *testing.T) {
-	t.Setenv("ORVILO_API_BASE_URL", "")
-	t.Setenv("LOBE_API_BASE_URL", "https://legacy.example")
-	if got := ConfigFromEnv().OrviloAPIBaseURL; got != "https://legacy.example" {
-		t.Fatalf("backend URL = %q, want the value of LOBE_API_BASE_URL", got)
-	}
-	t.Setenv("ORVILO_API_BASE_URL", "https://orvilo.example")
-	if got := ConfigFromEnv().OrviloAPIBaseURL; got != "https://orvilo.example" {
-		t.Fatalf("backend URL = %q, want ORVILO_API_BASE_URL to win", got)
 	}
 }

@@ -9,8 +9,6 @@
 
 协议核对时建议参考：
 
-- [Orvilo](https://github.com/lobehub/lobehub)：应用侧协议，重点关注 `packages/device-gateway-client`、`packages/agent-gateway-client` 和 `src/server/agent-hono/handlers`。
-- [Device Gateway](https://github.com/lobehub-biz/device-gateway)：Device Gateway 服务实现。
-- [Agent Gateway](https://github.com/lobehub-biz/agent-gateway)：Agent Gateway 服务实现。
+- [Orvilo](https://github.com/alexj11324/orvilo1)：应用侧协议，重点关注 `packages/device-gateway-client` 和 `packages/agent-gateway-client`。
 
-需要查看完整的上游服务实现时，可将对应仓库 clone 到项目根目录下的 `device-gateway/` 或 `agent-gateway/`；这两个目录仅用于参考，不属于本项目源码。
+本仓库的来源和与上游同步的方法见 `ORVILO.md`。

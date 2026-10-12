@@ -71,7 +71,7 @@ func newOperation(server *Server, operationID string) *operation {
 			OperationID: operationID,
 			// Status intentionally left empty to mirror upstream DO storage,
 			// which starts undefined and is only set when /api/operations/init
-			// lands. This makes the init/resume race (LOBE-10443) observable:
+			// lands. This makes the init/resume race observable:
 			// a WS resume that arrives before init sees no stored status and
 			// gets no resume_complete, so the opt-in client keeps waiting
 			// instead of false-completing.
@@ -322,7 +322,7 @@ func (o *operation) handleResume(conn *operationConnection, lastEventID string, 
 	// emitting an out-of-enum value breaks the SessionStatus contract. The
 	// opt-in client treats "no resume_complete" as "keep waiting" — live events
 	// still stream and heartbeat loss still forces reconnect — which is safe
-	// and recoverable. See LOBE-10443.
+	// and recoverable.
 	for _, payload := range payloads {
 		if !isMuxOnlyPayload(payload) {
 			_ = conn.writeRaw(payload)

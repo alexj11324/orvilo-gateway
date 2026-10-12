@@ -122,9 +122,9 @@ CD 工作流会发布 linux/amd64 和 linux/arm64 多架构镜像。默认地址
 
 当前实现风格刻意保持最小化：状态保存在内存中，服务作为普通 HTTP/WebSocket 服务器运行，部署方式可以是 systemd、Docker、Kubernetes 或任意进程管理器。
 
-## 与 LobeHub Gateway 的关系
+## 与原始网关的关系
 
-相比原始 LobeHub gateway 项目，本仓库有几个有意的差异：
+相比原始的 TypeScript 网关项目，本仓库有几个有意的差异：
 
 | 维度 | 原始 gateway | 本仓库 |
 | --- | --- | --- |
