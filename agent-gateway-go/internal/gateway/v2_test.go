@@ -87,6 +87,12 @@ func TestV2MultiplexesOperationsAndReplays(t *testing.T) {
 	}
 
 	ws.writeJSON(t, map[string]any{"type": "unsubscribe", "operationId": "mux-a"})
+	// Messages on one connection are handled in order, so the acknowledgement of
+	// a later heartbeat proves the unsubscribe has been applied before the push.
+	ws.writeJSON(t, map[string]any{"type": "heartbeat"})
+	if ack := ws.readJSON(t); ack["type"] != "heartbeat_ack" {
+		t.Fatalf("unexpected message after unsubscribe: %+v", ack)
+	}
 	postJSON(t, ts.URL+"/api/operations/push-event", eventBody("mux-a", "a3", "stream_chunk"), 200)
 	wsExpectNoMessage(t, ws, 100*time.Millisecond)
 }
