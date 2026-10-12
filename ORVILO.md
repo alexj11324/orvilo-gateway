@@ -1,9 +1,10 @@
 # Orvilo gateway
 
-Private copy of [lobehub/lobehub-gateway](https://github.com/lobehub/lobehub-gateway)
-carrying the changes Orvilo needs. Both gateways behind
-`device-gateway.aspectlylabs.com` and `agent-gateway.aspectlylabs.com` are built
-from this code.
+The gateways [Orvilo](https://github.com/alexj11324/orvilo1) runs, derived from
+[lobehub/lobehub-gateway](https://github.com/lobehub/lobehub-gateway) with the
+changes Orvilo needs. The Orvilo repository builds its device gateway and agent
+gateway from a pinned commit of this one, for production and for local
+development alike.
 
 ## What differs from upstream
 
