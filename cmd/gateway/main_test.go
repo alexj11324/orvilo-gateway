@@ -14,6 +14,8 @@ import (
 
 func TestConfigsFromEnvUsesDedicatedPorts(t *testing.T) {
 	t.Setenv("SERVICE_TOKEN", "test-token")
+	// The agent gateway refuses to start without the backend it forwards to.
+	t.Setenv("LOBE_API_BASE_URL", "https://orvilo.example")
 	t.Setenv("PORT", "9999")
 	t.Setenv("AGENT_PORT", "")
 	t.Setenv("DEVICE_PORT", "")
@@ -50,6 +52,8 @@ func TestConfigsFromEnvRequiresServiceToken(t *testing.T) {
 
 func TestRunServicesServesBothGatewaysAndStopsCleanly(t *testing.T) {
 	t.Setenv("SERVICE_TOKEN", "test-token")
+	// The agent gateway refuses to start without the backend it forwards to.
+	t.Setenv("LOBE_API_BASE_URL", "https://orvilo.example")
 	agentPort, devicePort := availablePorts(t)
 	t.Setenv("AGENT_PORT", agentPort)
 	t.Setenv("DEVICE_PORT", devicePort)
