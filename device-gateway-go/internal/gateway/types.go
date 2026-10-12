@@ -44,6 +44,7 @@ type rpcEnvelope struct {
 }
 
 type deviceHTTPBody struct {
+	WorkspaceID     string          `json:"workspaceId,omitempty"`
 	AgentType       string          `json:"agentType,omitempty"`
 	API             json.RawMessage `json:"api,omitempty"`
 	CWD             string          `json:"cwd,omitempty"`

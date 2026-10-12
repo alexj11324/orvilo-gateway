@@ -304,7 +304,7 @@ func TestAgentRunForwardsAllOptionalFields(t *testing.T) {
 	httpSrv := httptest.NewServer(srv.Routes())
 	defer httpSrv.Close()
 
-	ws := dialTestWS(t, httpSrv.URL, "/ws?userId=u1&deviceId=d1&connectionId=conn-1")
+	ws := dialTestWS(t, httpSrv.URL, "/ws?workspaceId=ws-1&deviceId=d1&connectionId=conn-1")
 	defer ws.close()
 	ws.sendJSON(t, map[string]any{"type": "auth", "token": "service-token"})
 	assertWSJSON(t, ws, map[string]any{"type": "auth_success"})
@@ -579,6 +579,13 @@ func base64Std(value []byte) string {
 }
 
 func testJWTSigner(t *testing.T) (string, func(string, time.Time, time.Time) string) {
+	jwks, sign := testJWTClaimsSigner(t)
+	return jwks, func(sub string, exp time.Time, nbf time.Time) string {
+		return sign(map[string]any{"exp": exp.Unix(), "iat": time.Now().Unix(), "nbf": nbf.Unix(), "sub": sub})
+	}
+}
+
+func testJWTClaimsSigner(t *testing.T) (string, func(map[string]any) string) {
 	t.Helper()
 	key, err := rsa.GenerateKey(rand.Reader, 2048)
 	if err != nil {
@@ -598,18 +605,13 @@ func testJWTSigner(t *testing.T) (string, func(string, time.Time, time.Time) str
 		t.Fatal(err)
 	}
 
-	return string(jwks), func(sub string, exp time.Time, nbf time.Time) string {
+	return string(jwks), func(claims map[string]any) string {
 		t.Helper()
 		header, err := json.Marshal(map[string]any{"alg": "RS256", "typ": "JWT"})
 		if err != nil {
 			t.Fatal(err)
 		}
-		payload, err := json.Marshal(map[string]any{
-			"exp": exp.Unix(),
-			"iat": time.Now().Unix(),
-			"nbf": nbf.Unix(),
-			"sub": sub,
-		})
+		payload, err := json.Marshal(claims)
 		if err != nil {
 			t.Fatal(err)
 		}

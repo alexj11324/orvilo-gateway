@@ -31,8 +31,10 @@ All `/api/device/*` endpoints require `Authorization: Bearer <SERVICE_TOKEN>` an
 
 | Variable | Default | Description |
 | --- | --- | --- |
+| `HOST` | `127.0.0.1` | Standalone device gateway listen address; the reverse proxy owns public ingress. |
 | `PORT` | `8787` | HTTP listen port. |
 | `SERVICE_TOKEN` | required | Shared service token for `/api/device/*` and WebSocket service-token auth. The process refuses to start without it. |
+| `ORVILO_API_BASE_URL` | empty | Trusted Orvilo server URL for API-key WebSocket auth. Other server URLs are rejected; API-key auth is disabled when unset. |
 | `JWKS_PUBLIC_KEY` | empty | JWKS JSON containing an RS256 public key for JWT WebSocket auth. |
 | `READ_TIMEOUT` | `30s` | Go HTTP server read timeout. |
 | `WRITE_TIMEOUT` | `1m` | Go HTTP server write timeout. |

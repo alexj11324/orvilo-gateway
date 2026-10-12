@@ -28,12 +28,18 @@ func newAuthResolver(cfg Config) *authResolver {
 	return &authResolver{cfg: cfg}
 }
 
-func (a *authResolver) resolve(ctx context.Context, storedUserID string, msg authMessage) (string, error) {
+func (a *authResolver) resolve(ctx context.Context, storedUserID, workspaceID string, msg authMessage) (string, error) {
 	if msg.Token == "" {
 		return "", errors.New("Missing token")
 	}
 
 	if msg.TokenType == "apiKey" {
+		if workspaceID != "" {
+			return "", errors.New("Workspace connections require a workspace device JWT")
+		}
+		if a.cfg.OrviloAPIBaseURL == "" || strings.TrimRight(msg.ServerURL, "/") != strings.TrimRight(a.cfg.OrviloAPIBaseURL, "/") {
+			return "", errors.New("API key serverUrl is not the configured Orvilo API server")
+		}
 		if msg.ServerURL == "" {
 			return "", errors.New("Missing serverUrl")
 		}
@@ -41,13 +47,32 @@ func (a *authResolver) resolve(ctx context.Context, storedUserID string, msg aut
 	}
 
 	if msg.Token == a.cfg.ServiceToken {
+		if workspaceID != "" {
+			return workspaceID, nil
+		}
 		if storedUserID == "" {
 			return "", errors.New("Missing userId")
 		}
 		return storedUserID, nil
 	}
 
-	return a.verifyJWT(msg.Token)
+	claims, err := a.verifyJWT(msg.Token)
+	if err != nil {
+		return "", err
+	}
+	sub, _ := claims["sub"].(string)
+	claimedWorkspace, _ := claims["workspace_id"].(string)
+	purpose, _ := claims["purpose"].(string)
+	if workspaceID != "" {
+		if purpose != "workspace-device-connect" || claimedWorkspace != workspaceID || sub != workspaceID {
+			return "", errors.New("Workspace device token does not match requested workspace")
+		}
+		return workspaceID, nil
+	}
+	if purpose == "workspace-device-connect" || claimedWorkspace != "" {
+		return "", errors.New("Workspace device token cannot authenticate a personal connection")
+	}
+	return sub, nil
 }
 
 func verifyAPIKey(ctx context.Context, serverURL string, token string) (string, error) {
@@ -105,14 +130,14 @@ func verifyAPIKey(ctx context.Context, serverURL string, token string) (string, 
 	return "", errors.New("Current user response did not include a user id.")
 }
 
-func (a *authResolver) verifyJWT(tokenString string) (string, error) {
+func (a *authResolver) verifyJWT(tokenString string) (map[string]any, error) {
 	key, err := a.publicKey()
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	parts := strings.Split(tokenString, ".")
 	if len(parts) != 3 {
-		return "", errors.New("invalid token")
+		return nil, errors.New("invalid token")
 	}
 
 	var header struct {
@@ -120,45 +145,45 @@ func (a *authResolver) verifyJWT(tokenString string) (string, error) {
 	}
 	headerBytes, err := base64.RawURLEncoding.DecodeString(parts[0])
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	if err := json.Unmarshal(headerBytes, &header); err != nil {
-		return "", err
+		return nil, err
 	}
 	if header.Alg != "RS256" {
-		return "", fmt.Errorf("unexpected signing method: %s", header.Alg)
+		return nil, fmt.Errorf("unexpected signing method: %s", header.Alg)
 	}
 
 	signed := []byte(parts[0] + "." + parts[1])
 	sum := sha256.Sum256(signed)
 	sig, err := base64.RawURLEncoding.DecodeString(parts[2])
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	if err := rsa.VerifyPKCS1v15(key, crypto.SHA256, sum[:], sig); err != nil {
-		return "", err
+		return nil, err
 	}
 
 	payloadBytes, err := base64.RawURLEncoding.DecodeString(parts[1])
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	var claims map[string]any
 	if err := json.Unmarshal(payloadBytes, &claims); err != nil {
-		return "", err
+		return nil, err
 	}
 	now := float64(time.Now().Unix())
 	if exp, ok := claims["exp"].(float64); ok && now >= exp {
-		return "", errors.New(`"exp" claim timestamp check failed`)
+		return nil, errors.New(`"exp" claim timestamp check failed`)
 	}
 	if nbf, ok := claims["nbf"].(float64); ok && now < nbf {
-		return "", errors.New(`"nbf" claim timestamp check failed`)
+		return nil, errors.New(`"nbf" claim timestamp check failed`)
 	}
 	sub, _ := claims["sub"].(string)
 	if sub == "" {
-		return "", errors.New("Missing sub claim")
+		return nil, errors.New("Missing sub claim")
 	}
-	return sub, nil
+	return claims, nil
 }
 
 func (a *authResolver) publicKey() (*rsa.PublicKey, error) {

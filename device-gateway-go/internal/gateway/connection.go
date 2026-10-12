@@ -8,6 +8,8 @@ import (
 )
 
 type connection struct {
+	principalID    string
+	workspaceID    string
 	att            DeviceAttachment
 	authTimeout    time.Duration
 	heartbeatTimer *time.Timer
@@ -89,8 +91,12 @@ func (c *connection) readLoop(auth *authResolver, heartbeatTimeout time.Duration
 				c.close(wsClosePolicy, err.Error())
 				return
 			}
-			verifiedUserID, err := auth.resolve(context.Background(), c.hub.userID, msg)
-			if err == nil && verifiedUserID != c.hub.userID {
+			verifiedUserID, err := auth.resolve(context.Background(), c.principalID, c.workspaceID, msg)
+			expectedID := c.principalID
+			if c.workspaceID != "" {
+				expectedID = c.workspaceID
+			}
+			if err == nil && verifiedUserID != expectedID {
 				err = errUserIDMismatch
 			}
 			if err != nil {

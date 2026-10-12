@@ -7,12 +7,14 @@ import (
 )
 
 type Config struct {
-	JWKSPublicKey   string
-	Port            string
-	ReadTimeout     time.Duration
-	ServiceToken    string
-	ShutdownTimeout time.Duration
-	WriteTimeout    time.Duration
+	ListenHost       string
+	OrviloAPIBaseURL string
+	JWKSPublicKey    string
+	Port             string
+	ReadTimeout      time.Duration
+	ServiceToken     string
+	ShutdownTimeout  time.Duration
+	WriteTimeout     time.Duration
 }
 
 func (c Config) Validate() error {
@@ -24,12 +26,14 @@ func (c Config) Validate() error {
 
 func ConfigFromEnv() Config {
 	return Config{
-		JWKSPublicKey:   os.Getenv("JWKS_PUBLIC_KEY"),
-		Port:            envOrDefault("PORT", "8787"),
-		ReadTimeout:     durationEnvOrDefault("READ_TIMEOUT", 30*time.Second),
-		ServiceToken:    os.Getenv("SERVICE_TOKEN"),
-		ShutdownTimeout: durationEnvOrDefault("SHUTDOWN_TIMEOUT", 10*time.Second),
-		WriteTimeout:    durationEnvOrDefault("WRITE_TIMEOUT", time.Minute),
+		ListenHost:       envOrDefault("HOST", "127.0.0.1"),
+		OrviloAPIBaseURL: os.Getenv("ORVILO_API_BASE_URL"),
+		JWKSPublicKey:    os.Getenv("JWKS_PUBLIC_KEY"),
+		Port:             envOrDefault("PORT", "8787"),
+		ReadTimeout:      durationEnvOrDefault("READ_TIMEOUT", 30*time.Second),
+		ServiceToken:     os.Getenv("SERVICE_TOKEN"),
+		ShutdownTimeout:  durationEnvOrDefault("SHUTDOWN_TIMEOUT", 10*time.Second),
+		WriteTimeout:     durationEnvOrDefault("WRITE_TIMEOUT", time.Minute),
 	}
 }
 
