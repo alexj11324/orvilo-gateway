@@ -10,8 +10,8 @@ import (
 	"syscall"
 	"time"
 
-	agentgateway "github.com/lobehub/lobehub/apps/agent-gateway-go"
-	devicegateway "github.com/lobehub/lobehub/apps/device-gateway-go"
+	agentgateway "github.com/alexj11324/orvilo-gateway/agent-gateway-go"
+	devicegateway "github.com/alexj11324/orvilo-gateway/device-gateway-go"
 )
 
 type service struct {

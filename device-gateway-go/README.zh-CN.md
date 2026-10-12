@@ -2,7 +2,7 @@
 
 [English](./README.md)
 
-`device-gateway-go` 是 LobeHub Device Gateway 协议的单实例、自托管 Go 实现。它将所有状态保存在内存中，不依赖 Cloudflare Durable Objects、Redis、PostgreSQL 或 NATS。
+`device-gateway-go` 是 Orvilo Device Gateway 协议的单实例、自托管 Go 实现。它将所有状态保存在内存中，不依赖 Cloudflare Durable Objects、Redis、PostgreSQL 或 NATS。
 
 原始 Cloudflare Worker Device Gateway 仍然是参考实现。本服务的目标是在自托管部署中尽量保持公开 HTTP 与 WebSocket 行为兼容，同时以普通 Go 服务的形式运行。
 
@@ -11,7 +11,7 @@
 - 单网关实例，连接状态保存在内存中。
 - 平台无关的 HTTP 与 WebSocket 服务。
 - 不依赖 Cloudflare Workers、Durable Objects、Redis、PostgreSQL 或 NATS。
-- 在可行范围内保持面向 LobeHub Server、CLI、桌面端和连接设备的公开路由兼容。
+- 在可行范围内保持面向 Orvilo Server、CLI、桌面端和连接设备的公开路由兼容。
 
 ## 接口
 
@@ -47,7 +47,7 @@ cd device-gateway-go
 SERVICE_TOKEN=dev-secret go run ./cmd/device-gateway-go
 ```
 
-然后为 LobeHub Server 配置：
+然后为 Orvilo Server 配置：
 
 ```bash
 DEVICE_GATEWAY_URL=http://localhost:8787
@@ -57,7 +57,7 @@ DEVICE_GATEWAY_SERVICE_TOKEN=dev-secret
 设备可以通过以下方式连接：
 
 ```bash
-lh connect --gateway http://localhost:8787
+orvilo connect --gateway http://localhost:8787
 ```
 
 桌面客户端也应使用相同的 gateway URL。
@@ -67,8 +67,8 @@ lh connect --gateway http://localhost:8787
 从仓库根目录运行：
 
 ```bash
-docker build -f device-gateway-go/Dockerfile -t lobehub-device-gateway-go device-gateway-go
-docker run --rm -p 8787:8787 -e SERVICE_TOKEN=dev-secret lobehub-device-gateway-go
+docker build -f device-gateway-go/Dockerfile -t orvilo-device-gateway device-gateway-go
+docker run --rm -p 8787:8787 -e SERVICE_TOKEN=dev-secret orvilo-device-gateway
 ```
 
 ## 反向代理说明

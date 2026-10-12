@@ -19,9 +19,9 @@ func newV2TestServer(t *testing.T) (*Server, *httptest.Server, func(string, time
 	t.Helper()
 	jwks, signJWT := testJWTSigner(t)
 	srv := NewServer(Config{
-		JWKSPublicKey:  jwks,
-		LobeAPIBaseURL: "http://127.0.0.1:1",
-		ServiceToken:   "service-token",
+		JWKSPublicKey:    jwks,
+		OrviloAPIBaseURL: "http://127.0.0.1:1",
+		ServiceToken:     "service-token",
 	})
 	srv.cleanupDelay = time.Second
 	return srv, httptest.NewServer(srv.Routes()), signJWT
@@ -300,7 +300,7 @@ func TestV2PendingSubscriptionForwardsClientMessages(t *testing.T) {
 	defer backend.Close()
 
 	jwks, signJWT := testJWTSigner(t)
-	srv := NewServer(Config{JWKSPublicKey: jwks, LobeAPIBaseURL: backend.URL, ServiceToken: "service-token"})
+	srv := NewServer(Config{JWKSPublicKey: jwks, OrviloAPIBaseURL: backend.URL, ServiceToken: "service-token"})
 	ts := httptest.NewServer(srv.Routes())
 	defer ts.Close()
 
@@ -349,7 +349,7 @@ func TestV2WatchdogLifecycleIncludesSummary(t *testing.T) {
 	defer backend.Close()
 
 	jwks, signJWT := testJWTSigner(t)
-	srv := NewServer(Config{JWKSPublicKey: jwks, LobeAPIBaseURL: backend.URL, ServiceToken: "service-token"})
+	srv := NewServer(Config{JWKSPublicKey: jwks, OrviloAPIBaseURL: backend.URL, ServiceToken: "service-token"})
 	ts := httptest.NewServer(srv.Routes())
 	defer ts.Close()
 	postJSON(t, ts.URL+"/api/operations/init", map[string]any{"operationId": "watchdog-lifecycle", "userId": "user-1"}, 200)
@@ -482,7 +482,7 @@ func TestV2ToolResultForwarding(t *testing.T) {
 	defer backend.Close()
 
 	jwks, signJWT := testJWTSigner(t)
-	srv := NewServer(Config{JWKSPublicKey: jwks, LobeAPIBaseURL: backend.URL, ServiceToken: "service-token"})
+	srv := NewServer(Config{JWKSPublicKey: jwks, OrviloAPIBaseURL: backend.URL, ServiceToken: "service-token"})
 	ts := httptest.NewServer(srv.Routes())
 	defer ts.Close()
 	postJSON(t, ts.URL+"/api/operations/init", map[string]any{"operationId": "mux-result", "userId": "user-1"}, 200)
@@ -545,7 +545,7 @@ func TestV1OwnerIsRecheckedWhenInitRacesAuthentication(t *testing.T) {
 	}))
 	defer identity.Close()
 
-	srv := NewServer(Config{ServiceToken: "service-token", LobeAPIBaseURL: identity.URL})
+	srv := NewServer(Config{ServiceToken: "service-token", OrviloAPIBaseURL: identity.URL})
 	ts := httptest.NewServer(srv.Routes())
 	defer ts.Close()
 	ws := dialWebSocket(t, ts.URL, "/ws?operationId=auth-init-race")

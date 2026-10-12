@@ -7,31 +7,31 @@ import (
 )
 
 type Config struct {
-	JWKSPublicKey   string
-	LobeAPIBaseURL  string
-	Port            string
-	ReadTimeout     time.Duration
-	ServiceToken    string
-	ShutdownTimeout time.Duration
-	WriteTimeout    time.Duration
+	JWKSPublicKey    string
+	OrviloAPIBaseURL string
+	Port             string
+	ReadTimeout      time.Duration
+	ServiceToken     string
+	ShutdownTimeout  time.Duration
+	WriteTimeout     time.Duration
 }
 
 func (c Config) Validate() error {
 	if c.ServiceToken == "" {
 		return errors.New("SERVICE_TOKEN is required")
 	}
-	return validateAPIKeyServerURL(c.LobeAPIBaseURL, c.LobeAPIBaseURL)
+	return validateAPIKeyServerURL(c.OrviloAPIBaseURL, c.OrviloAPIBaseURL)
 }
 
 func ConfigFromEnv() Config {
 	return Config{
-		JWKSPublicKey:   os.Getenv("JWKS_PUBLIC_KEY"),
-		LobeAPIBaseURL:  os.Getenv("LOBE_API_BASE_URL"),
-		Port:            envOrDefault("PORT", "8787"),
-		ReadTimeout:     durationEnvOrDefault("READ_TIMEOUT", 30*time.Second),
-		ServiceToken:    os.Getenv("SERVICE_TOKEN"),
-		ShutdownTimeout: durationEnvOrDefault("SHUTDOWN_TIMEOUT", 10*time.Second),
-		WriteTimeout:    durationEnvOrDefault("WRITE_TIMEOUT", time.Minute),
+		JWKSPublicKey:    os.Getenv("JWKS_PUBLIC_KEY"),
+		OrviloAPIBaseURL: backendURLFromEnv(),
+		Port:             envOrDefault("PORT", "8787"),
+		ReadTimeout:      durationEnvOrDefault("READ_TIMEOUT", 30*time.Second),
+		ServiceToken:     os.Getenv("SERVICE_TOKEN"),
+		ShutdownTimeout:  durationEnvOrDefault("SHUTDOWN_TIMEOUT", 10*time.Second),
+		WriteTimeout:     durationEnvOrDefault("WRITE_TIMEOUT", time.Minute),
 	}
 }
 
@@ -52,4 +52,14 @@ func durationEnvOrDefault(key string, fallback time.Duration) time.Duration {
 		return fallback
 	}
 	return parsed
+}
+
+// backendURLFromEnv reads the Orvilo server address. LOBE_API_BASE_URL is the
+// name upstream uses and existing deployments are configured with; it stays
+// accepted so they keep starting.
+func backendURLFromEnv() string {
+	if value := os.Getenv("ORVILO_API_BASE_URL"); value != "" {
+		return value
+	}
+	return os.Getenv("LOBE_API_BASE_URL")
 }

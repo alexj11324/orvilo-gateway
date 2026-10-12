@@ -9,7 +9,7 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/lobehub/lobehub/apps/agent-gateway-go/internal/gateway"
+	"github.com/alexj11324/orvilo-gateway/agent-gateway-go/internal/gateway"
 )
 
 func main() {

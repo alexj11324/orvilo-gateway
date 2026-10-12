@@ -21,7 +21,7 @@ import (
 )
 
 func testServer() (*Server, *httptest.Server) {
-	srv := NewServer(Config{ServiceToken: "service-token", LobeAPIBaseURL: "http://127.0.0.1:1"})
+	srv := NewServer(Config{ServiceToken: "service-token", OrviloAPIBaseURL: "http://127.0.0.1:1"})
 	srv.authTimeout = time.Second
 	srv.heartbeatTimeout = time.Second
 	srv.cleanupDelay = time.Second
@@ -197,7 +197,7 @@ func TestWebSocketResumeCompleteSkippedWhenStatusMissing(t *testing.T) {
 
 func TestWebSocketJWTClaimValidation(t *testing.T) {
 	jwks, signJWT := testJWTSigner(t)
-	srv := NewServer(Config{JWKSPublicKey: jwks, LobeAPIBaseURL: "http://127.0.0.1:1", ServiceToken: "service-token"})
+	srv := NewServer(Config{JWKSPublicKey: jwks, OrviloAPIBaseURL: "http://127.0.0.1:1", ServiceToken: "service-token"})
 	srv.authTimeout = time.Second
 	httpSrv := httptest.NewServer(srv.Routes())
 	defer httpSrv.Close()
@@ -284,7 +284,7 @@ func TestInactivityWatchdogReconcilesPhantomTimeout(t *testing.T) {
 	}))
 	defer finalizeSrv.Close()
 
-	srv := NewServer(Config{ServiceToken: "service-token", LobeAPIBaseURL: finalizeSrv.URL})
+	srv := NewServer(Config{ServiceToken: "service-token", OrviloAPIBaseURL: finalizeSrv.URL})
 	srv.cleanupDelay = time.Second
 	httpSrv := httptest.NewServer(srv.Routes())
 	defer httpSrv.Close()
@@ -318,7 +318,7 @@ func TestInactivityWatchdogReportsAbandonedTimeout(t *testing.T) {
 	}))
 	defer finalizeSrv.Close()
 
-	srv := NewServer(Config{ServiceToken: "service-token", LobeAPIBaseURL: finalizeSrv.URL})
+	srv := NewServer(Config{ServiceToken: "service-token", OrviloAPIBaseURL: finalizeSrv.URL})
 	srv.cleanupDelay = time.Second
 	httpSrv := httptest.NewServer(srv.Routes())
 	defer httpSrv.Close()
@@ -356,7 +356,7 @@ func TestInactivityWatchdogRechecksRecentEventsAfterFinalize(t *testing.T) {
 	}))
 	defer finalizeSrv.Close()
 
-	srv := NewServer(Config{ServiceToken: "service-token", LobeAPIBaseURL: finalizeSrv.URL})
+	srv := NewServer(Config{ServiceToken: "service-token", OrviloAPIBaseURL: finalizeSrv.URL})
 	srv.cleanupDelay = time.Second
 	httpSrv := httptest.NewServer(srv.Routes())
 	defer httpSrv.Close()

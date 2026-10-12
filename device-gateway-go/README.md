@@ -2,7 +2,7 @@
 
 [简体中文](./README.zh-CN.md)
 
-`device-gateway-go` is a single-instance, self-hosted Go implementation of the LobeHub Device Gateway protocol. It keeps all state in memory and does not depend on Cloudflare Durable Objects, Redis, PostgreSQL, or NATS.
+`device-gateway-go` is a single-instance, self-hosted Go implementation of the Orvilo Device Gateway protocol. It keeps all state in memory and does not depend on Cloudflare Durable Objects, Redis, PostgreSQL, or NATS.
 
 The original Cloudflare Worker Device Gateway remains the reference implementation. This service aims to keep the public HTTP and WebSocket behavior compatible for self-hosted deployments while running as a normal Go service.
 
@@ -11,7 +11,7 @@ The original Cloudflare Worker Device Gateway remains the reference implementati
 - Single gateway instance with in-memory connection state.
 - Platform-neutral HTTP and WebSocket server.
 - No Cloudflare Workers, Durable Objects, Redis, PostgreSQL, or NATS dependency.
-- Compatible public routes for LobeHub Server, CLI, desktop, and connected devices where practical.
+- Compatible public routes for Orvilo Server, CLI, desktop, and connected devices where practical.
 
 ## Endpoints
 
@@ -49,7 +49,7 @@ cd device-gateway-go
 SERVICE_TOKEN=dev-secret go run ./cmd/device-gateway-go
 ```
 
-Then configure LobeHub Server with:
+Then configure Orvilo Server with:
 
 ```bash
 DEVICE_GATEWAY_URL=http://localhost:8787
@@ -59,7 +59,7 @@ DEVICE_GATEWAY_SERVICE_TOKEN=dev-secret
 Devices can connect with:
 
 ```bash
-lh connect --gateway http://localhost:8787
+orvilo connect --gateway http://localhost:8787
 ```
 
 Desktop clients should use the same gateway URL.
@@ -69,8 +69,8 @@ Desktop clients should use the same gateway URL.
 From the repository root:
 
 ```bash
-docker build -f device-gateway-go/Dockerfile -t lobehub-device-gateway-go device-gateway-go
-docker run --rm -p 8787:8787 -e SERVICE_TOKEN=dev-secret lobehub-device-gateway-go
+docker build -f device-gateway-go/Dockerfile -t orvilo-device-gateway device-gateway-go
+docker run --rm -p 8787:8787 -e SERVICE_TOKEN=dev-secret orvilo-device-gateway
 ```
 
 ## Reverse proxy notes

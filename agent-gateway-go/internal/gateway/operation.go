@@ -523,7 +523,7 @@ func (o *operation) callFinalizeAbandoned(operationID string, reason string) (fi
 	body, _ := json.Marshal(map[string]string{"operationId": operationID, "reason": reason})
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, normalizeBaseURL(o.server.cfg.LobeAPIBaseURL)+"/api/agent/finalize-abandoned", bytes.NewReader(body))
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, normalizeBaseURL(o.server.cfg.OrviloAPIBaseURL)+"/api/agent/finalize-abandoned", bytes.NewReader(body))
 	if err != nil {
 		return finalizeAbandonedResult{}, false
 	}
@@ -558,7 +558,7 @@ func (o *operation) forwardToolResult(msg toolResultMessage) {
 	body, _ := json.Marshal(msg)
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, normalizeBaseURL(o.server.cfg.LobeAPIBaseURL)+"/api/agent/tool-result", bytes.NewReader(body))
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, normalizeBaseURL(o.server.cfg.OrviloAPIBaseURL)+"/api/agent/tool-result", bytes.NewReader(body))
 	if err != nil {
 		return
 	}

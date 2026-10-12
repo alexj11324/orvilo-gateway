@@ -1,14 +1,14 @@
-# LobeHub Gateway Go
+# Orvilo Gateway
 
 [简体中文](./README.zh-CN.md)
 
-`lobehub-gateway-go` is a Go reimplementation of the LobeHub gateway services. It is intended for self-hosted deployments that need a simple, single-instance gateway without Cloudflare platform bindings or external infrastructure dependencies.
+`orvilo-gateway` is a Go reimplementation of the Orvilo gateway services. It is intended for self-hosted deployments that need a simple, single-instance gateway without Cloudflare platform bindings or external infrastructure dependencies.
 
 The original gateway implementations remain the protocol reference. This repository focuses on keeping the public HTTP and WebSocket behavior compatible while making the runtime easier to run as a normal Go service.
 
 ## Goals
 
-- Go implementation of LobeHub gateway protocols.
+- Go implementation of Orvilo gateway protocols.
 - Single-instance design for straightforward self-hosting.
 - No Cloudflare Workers or Durable Objects dependency.
 - No Redis, PostgreSQL, NATS, or other external runtime services.
@@ -29,7 +29,7 @@ The alignment target does not include deliberately excluded platform surfaces: a
 
 | Project | Status | Description |
 | --- | --- | --- |
-| [`device-gateway-go`](./device-gateway-go/README.md) | Implemented | Device gateway for routing LobeHub device connections, status queries, tool calls, system information, and agent-run requests. |
+| [`device-gateway-go`](./device-gateway-go/README.md) | Implemented | Device gateway for routing Orvilo device connections, status queries, tool calls, system information, and agent-run requests. |
 | [`agent-gateway-go`](./agent-gateway-go/README.md) | Implemented | Agent gateway for relaying browser WebSocket sessions and server-pushed agent events. |
 
 ## Unified Binary
@@ -37,7 +37,7 @@ The alignment target does not include deliberately excluded platform surfaces: a
 The root module (`go.mod`) provides a unified entry point that starts both gateway services in a single process:
 
 ```text
-lobehub-gateway-go/
+orvilo-gateway/
   go.mod                          # umbrella module with replace directives
   cmd/gateway/main.go             # unified entry: runs agent + device simultaneously
   agent-gateway-go/
@@ -72,7 +72,7 @@ Each sub-project remains an independent Go module and can be built/tested on its
 | --- | --- | --- | --- |
 | `SERVICE_TOKEN` | — | Yes | Service auth token (required) |
 | `JWKS_PUBLIC_KEY` | — | Yes | JWKS public key for JWT verification |
-| `LOBE_API_BASE_URL` | `https://app.lobehub.com` | Agent only | LobeHub API base URL |
+| `ORVILO_API_BASE_URL` | required | Agent only | Orvilo API base URL |
 | `AGENT_PORT` | `8787` | Agent only | Agent gateway listen port |
 | `DEVICE_PORT` | `8788` | Device only | Device gateway listen port |
 | `READ_TIMEOUT` | `30s` | Yes | HTTP read timeout |
@@ -98,12 +98,12 @@ Replace `amd64` with `arm64` for ARM systems. Standalone release asset names inc
 Build and run the unified image locally:
 
 ```bash
-docker build -f docker/Dockerfile -t lobehub-gateway-go .
+docker build -f docker/Dockerfile -t orvilo-gateway .
 docker run --rm \
   -p 8787:8787 \
   -p 8788:8788 \
   -e SERVICE_TOKEN=your-token \
-  lobehub-gateway-go
+  orvilo-gateway
 ```
 
 Or start the provided Compose service:
@@ -112,9 +112,9 @@ Or start the provided Compose service:
 SERVICE_TOKEN=your-token docker compose -f docker/docker-compose.yml up -d --build
 ```
 
-The Compose file uses the unified binary's default listener ports and forwards `SERVICE_TOKEN`, `JWKS_PUBLIC_KEY`, and `LOBE_API_BASE_URL`. To use custom listener ports or timeout values, add the corresponding variables from the table above to the Compose service's `environment` section and update its `ports` mappings when changing `AGENT_PORT` or `DEVICE_PORT`.
+The Compose file uses the unified binary's default listener ports and forwards `SERVICE_TOKEN`, `JWKS_PUBLIC_KEY`, and `ORVILO_API_BASE_URL`. To use custom listener ports or timeout values, add the corresponding variables from the table above to the Compose service's `environment` section and update its `ports` mappings when changing `AGENT_PORT` or `DEVICE_PORT`.
 
-The CD workflow publishes a multi-architecture image for linux/amd64 and linux/arm64. By default it is published as `ghcr.io/lobehub/lobehub-gateway:<version>`; repository maintainers can override the destination with the `DOCKER_IMAGE` Actions secret. Stable releases selected as the default version also publish the `latest` tag.
+The CD workflow publishes a multi-architecture image for linux/amd64 and linux/arm64. By default it is published as `ghcr.io/alexj11324/orvilo-gateway:<version>`; repository maintainers can override the destination with the `DOCKER_IMAGE` Actions secret. Stable releases selected as the default version also publish the `latest` tag.
 
 ## Architecture
 

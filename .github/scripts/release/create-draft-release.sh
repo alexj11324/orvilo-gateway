@@ -39,7 +39,7 @@ else
     --draft
     --verify-tag
     --target "$TARGET_SHA"
-    --title "LobeHub Gateway Go $VERSION"
+    --title "Orvilo Gateway $VERSION"
     --notes-file "$NOTES_FILE"
   )
   if [[ "$PRERELEASE" == "true" ]]; then

@@ -1,6 +1,6 @@
 package devicegateway
 
-import "github.com/lobehub/lobehub/apps/device-gateway-go/internal/gateway"
+import "github.com/alexj11324/orvilo-gateway/device-gateway-go/internal/gateway"
 
 type Config = gateway.Config
 

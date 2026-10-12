@@ -39,10 +39,10 @@ func (a *authResolver) resolve(ctx context.Context, storedUserID string, msg aut
 		if msg.ServerURL == "" {
 			return "", errors.New("Missing serverUrl for apiKey auth")
 		}
-		if err := validateAPIKeyServerURL(a.cfg.LobeAPIBaseURL, msg.ServerURL); err != nil {
+		if err := validateAPIKeyServerURL(a.cfg.OrviloAPIBaseURL, msg.ServerURL); err != nil {
 			return "", err
 		}
-		return verifyAPIKey(ctx, a.cfg.LobeAPIBaseURL, msg.Token)
+		return verifyAPIKey(ctx, a.cfg.OrviloAPIBaseURL, msg.Token)
 	}
 
 	if msg.Token == a.cfg.ServiceToken {

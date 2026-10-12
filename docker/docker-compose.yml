@@ -3,12 +3,12 @@ services:
     build:
       context: ..
       dockerfile: docker/Dockerfile
-    image: lobehub-gateway-go:latest
+    image: orvilo-gateway:latest
     ports:
       - "8787:8787"
       - "8788:8788"
     environment:
       SERVICE_TOKEN: ${SERVICE_TOKEN:?SERVICE_TOKEN is required}
       JWKS_PUBLIC_KEY: ${JWKS_PUBLIC_KEY:-}
-      LOBE_API_BASE_URL: ${LOBE_API_BASE_URL:-}
+      ORVILO_API_BASE_URL: ${ORVILO_API_BASE_URL:-}
     restart: unless-stopped

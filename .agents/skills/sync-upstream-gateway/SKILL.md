@@ -5,7 +5,7 @@ description: 将本仓库的 Go gateway 实现与上游 LobeHub 参考实现（d
 
 # Sync Upstream Gateway Implementation
 
-用于将 `lobehub-gateway-go` 的 Go 实现与上游 LobeHub gateway 参考实现的协议行为对齐。
+用于将 `orvilo-gateway` 的 Go 实现与上游 LobeHub gateway 参考实现的协议行为对齐。
 
 ## 何时使用
 

@@ -49,7 +49,7 @@ jobs:
       - name: Print release summary
         run: |
           {
-            echo "## LobeHub Gateway Go Release"
+            echo "## Orvilo Gateway Release"
             echo
             echo "- Version: \`${{ steps.prepare.outputs.version }}\`"
             echo "- Workflow ref: \`${{ github.ref_name }}\`"

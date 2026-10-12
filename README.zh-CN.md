@@ -1,14 +1,14 @@
-# LobeHub Gateway Go
+# Orvilo Gateway
 
 [English](./README.md)
 
-`lobehub-gateway-go` 是 LobeHub 网关服务的 Go 语言重新实现版本。它面向自托管部署场景，目标是在不绑定 Cloudflare 平台、也不依赖外部基础设施的前提下，提供简单的单实例网关服务。
+`orvilo-gateway` 是 Orvilo 网关服务的 Go 语言重新实现版本。它面向自托管部署场景，目标是在不绑定 Cloudflare 平台、也不依赖外部基础设施的前提下，提供简单的单实例网关服务。
 
 原始网关实现仍然是协议参考。本仓库关注在尽量保持公开 HTTP 与 WebSocket 行为兼容的同时，让网关可以作为普通 Go 服务运行。
 
 ## 目标
 
-- 使用 Go 实现 LobeHub 网关协议。
+- 使用 Go 实现 Orvilo 网关协议。
 - 采用单实例设计，便于自托管部署。
 - 不依赖 Cloudflare Workers 或 Durable Objects。
 - 不依赖 Redis、PostgreSQL、NATS 或其他外部运行时服务。
@@ -29,7 +29,7 @@
 
 | 项目 | 状态 | 说明 |
 | --- | --- | --- |
-| [`device-gateway-go`](./device-gateway-go/README.md) | 已实现 | 设备网关，用于路由 LobeHub 设备连接、状态查询、工具调用、系统信息和 agent 运行请求。 |
+| [`device-gateway-go`](./device-gateway-go/README.md) | 已实现 | 设备网关，用于路由 Orvilo 设备连接、状态查询、工具调用、系统信息和 agent 运行请求。 |
 | [`agent-gateway-go`](./agent-gateway-go/README.md) | 已实现 | Agent 网关，用于中转浏览器 WebSocket 会话和服务端推送的 agent 事件流。 |
 
 ## 统一二进制
@@ -37,7 +37,7 @@
 根模块（`go.mod`）提供统一入口，可以在单个进程中同时启动两个网关服务：
 
 ```text
-lobehub-gateway-go/
+orvilo-gateway/
   go.mod                          # umbrella module，通过 replace 指令引用子模块
   cmd/gateway/main.go             # 统一入口：同时运行 agent + device
   agent-gateway-go/
@@ -72,7 +72,7 @@ lobehub-gateway-go/
 | --- | --- | --- | --- |
 | `SERVICE_TOKEN` | — | 是 | 服务认证令牌（必填） |
 | `JWKS_PUBLIC_KEY` | — | 是 | JWT 验证用的 JWKS 公钥 |
-| `LOBE_API_BASE_URL` | `https://app.lobehub.com` | 仅 Agent | LobeHub API 基础地址 |
+| `ORVILO_API_BASE_URL` | required | 仅 Agent | Orvilo API 基础地址 |
 | `AGENT_PORT` | `8787` | 仅 Agent | Agent 网关监听端口 |
 | `DEVICE_PORT` | `8788` | 仅 Device | Device 网关监听端口 |
 | `READ_TIMEOUT` | `30s` | 是 | HTTP 读取超时 |
@@ -98,12 +98,12 @@ ARM 系统请将 `amd64` 替换为 `arm64`。独立二进制的 Release 产物�
 在本地构建并运行统一镜像：
 
 ```bash
-docker build -f docker/Dockerfile -t lobehub-gateway-go .
+docker build -f docker/Dockerfile -t orvilo-gateway .
 docker run --rm \
   -p 8787:8787 \
   -p 8788:8788 \
   -e SERVICE_TOKEN=your-token \
-  lobehub-gateway-go
+  orvilo-gateway
 ```
 
 也可以启动仓库提供的 Compose 服务：
@@ -112,9 +112,9 @@ docker run --rm \
 SERVICE_TOKEN=your-token docker compose -f docker/docker-compose.yml up -d --build
 ```
 
-Compose 文件使用统一二进制的默认监听端口，并透传 `SERVICE_TOKEN`、`JWKS_PUBLIC_KEY` 和 `LOBE_API_BASE_URL`。如需使用自定义监听端口或超时，请在 Compose 服务的 `environment` 中添加上表对应变量；修改 `AGENT_PORT` 或 `DEVICE_PORT` 时还需同步更新 `ports` 映射。
+Compose 文件使用统一二进制的默认监听端口，并透传 `SERVICE_TOKEN`、`JWKS_PUBLIC_KEY` 和 `ORVILO_API_BASE_URL`。如需使用自定义监听端口或超时，请在 Compose 服务的 `environment` 中添加上表对应变量；修改 `AGENT_PORT` 或 `DEVICE_PORT` 时还需同步更新 `ports` 映射。
 
-CD 工作流会发布 linux/amd64 和 linux/arm64 多架构镜像。默认地址为 `ghcr.io/lobehub/lobehub-gateway:<version>`；仓库维护者可以通过 Actions secret `DOCKER_IMAGE` 覆盖目标地址。被选为默认版本的稳定 Release 还会发布 `latest` 标签。
+CD 工作流会发布 linux/amd64 和 linux/arm64 多架构镜像。默认地址为 `ghcr.io/alexj11324/orvilo-gateway:<version>`；仓库维护者可以通过 Actions secret `DOCKER_IMAGE` 覆盖目标地址。被选为默认版本的稳定 Release 还会发布 `latest` 标签。
 
 ## 架构
 
